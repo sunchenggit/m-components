@@ -2,9 +2,20 @@
   <el-button @click="handleClick" type="primary">
     <slot></slot>
   </el-button>
-  <el-dialog :title="title" v-model="dialogVisible">11</el-dialog>
+  <el-dialog :title="title" v-model="dialogVisible">
+    <div class="container">
+      <div class="item" v-for="item in Object.keys(ElIcons)" :key="item">
+        <div>
+          <component :is="`el-icon-${toLine(item)}`"></component>
+        </div>
+        <div>{{ item }}</div>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
+import * as ElIcons from "@element-plus/icons-vue";
+import { toLine } from "../../../utils";
 import { watch, ref } from "vue";
 let props = defineProps<{
   title: string;
@@ -33,3 +44,30 @@ watch(
   }
 );
 </script>
+
+<style lang="scss" scoped>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  height: 50vh;
+  overflow-x: hidden;
+}
+.item {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  height: 70px;
+  div:first-child {
+    flex: 1;
+  }
+}
+svg {
+  width: 2em;
+  height: 2em;
+}
+</style>
