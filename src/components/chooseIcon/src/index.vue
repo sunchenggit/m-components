@@ -2,21 +2,29 @@
   <el-button @click="handleClick" type="primary">
     <slot></slot>
   </el-button>
-  <el-dialog :title="title" v-model="dialogVisible">
-    <div class="container">
-      <div class="item" v-for="item in Object.keys(ElIcons)" :key="item">
-        <div>
-          <component :is="`el-icon-${toLine(item)}`"></component>
+  <div class="m-choose-icon-dialog-body-height">
+    <el-dialog :title="title" v-model="dialogVisible">
+      <div class="container">
+        <div
+          class="item"
+          v-for="item in Object.keys(ElIcons)"
+          :key="item"
+          @click="clickItem(item)"
+        >
+          <div>
+            <component :is="`el-icon-${toLine(item)}`"></component>
+          </div>
+          <div>{{ item }}</div>
         </div>
-        <div>{{ item }}</div>
       </div>
-    </div>
-  </el-dialog>
+    </el-dialog>
+  </div>
 </template>
 <script lang="ts" setup>
 import * as ElIcons from "@element-plus/icons-vue";
 import { toLine } from "../../../utils";
 import { watch, ref } from "vue";
+import { useCopy } from "../../../hooks/useCopy";
 let props = defineProps<{
   title: string;
   visible: boolean;
@@ -43,6 +51,11 @@ watch(
     emits("update:visible", val);
   }
 );
+
+let clickItem = (item) => {
+  let text = `el-icon-${toLine(item)}`;
+  useCopy(text);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -51,8 +64,6 @@ watch(
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  height: 50vh;
-  overflow-x: hidden;
 }
 .item {
   width: 20%;
