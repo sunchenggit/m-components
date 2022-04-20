@@ -22,3 +22,11 @@
     text-align: center;
   }
 } 
+
+.progress-wrap {
+  width: 300px;
+  .el-progress-circle svg {
+    width: 8em;
+    height: 8em;
+  }
+}

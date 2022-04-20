@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="progress-wrap">
     <el-progress v-bind="$attrs" :percentage="p" />
   </div>
 </template>
