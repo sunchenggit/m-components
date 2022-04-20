@@ -88,4 +88,4 @@ watch(
 );
 </script>
 
-<tyle lang="scss" scoped></tyle>
+<style lang="scss" scoped></style>

@@ -50,7 +50,7 @@ let data = [
   {
     icon: "TurnOff",
     name: "城市选择",
-    index: "/chooseCity",
+    index: "/citySelect",
   },
   {
     icon: "DarrowRight",
