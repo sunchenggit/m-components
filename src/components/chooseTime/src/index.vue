@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="display: flex">
     <div style="margin-right: 20px">
       <el-time-select
         v-model="startTime"
