@@ -1,3 +1,4 @@
+import { CSSProperties } from "vue"
 import { RuleItem } from "./rule"
 
 // 可配置的表单
@@ -13,13 +14,17 @@ export interface FormOptions {
   // 表单项的标识
   prop?: string,
   // 表单项的验证规则
-  rules?: RuleItem,
+  rules?: RuleItem[],
   // 表单项的占位符
-  placeholder: string,
+  placeholder?: string,
   // 表单特有的属性 暂时 any 类型
-  attrs: {
+  attrs?: {
     clearable?: boolean,
     showPassword?: boolean,
     disabled?: boolean,
-  }
+    // css 样式
+    style?: CSSProperties,
+  },
+  // 表单项的子元素
+  children?: FormOptions[],
 }
