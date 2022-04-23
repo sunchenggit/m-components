@@ -8,7 +8,7 @@ export interface FormOptions {
   // 表单显示的元素
   type: 'cascader' | 'checkbox' | 'checkbox-group' | 'checkbox-button' | 'color-picker' | 'date-picker' | 'input' | 'input-number' | 'radio' | 'radio-group' | 'radio-button' | 'rate' | 'select' | 'option' | 'slider' | 'switch' | 'time-picker' | 'time-select' | 'transfer' | 'upload',
   // 表单项的值
-  value: any,
+  value?: any,
   // 表单的label
   label?: string,
   // 表单项的标识
@@ -27,4 +27,23 @@ export interface FormOptions {
   },
   // 表单项的子元素
   children?: FormOptions[],
+  // 处理上传组件的属性和方法
+  uploadAttrs?: {
+    actions: string,
+    headers?: object,
+    method?: 'post' | 'put' | 'patch',
+    multiple?: boolean,
+    data?: any,
+    name?: string,
+    withDirectives?: boolean,
+    showFileList?: boolean,
+    drag?: boolean,
+    accept?: string,
+    thumbnailmode?: boolean,
+    fileList?: any[],
+    listType?: 'text' | 'picture' | 'picture-card',
+    autoUpload?: boolean,
+    disabled?: boolean,
+    limit?: number,
+  }
 }

@@ -1,5 +1,25 @@
 <template>
-  <div><m-form :options="options" /></div>
+  <div>
+    <m-form
+      :options="options"
+      @on-change="handleChange"
+      @before-upload="beforeUpload"
+      @on-remove="handleRemove"
+      @on-preview="handlePreview"
+      @on-exceed="handleExceed"
+      @before-remove="beforeRemove"
+      @on-success="handleSuccess"
+    >
+      <template #uploadArea>
+        <el-button type="primary">Click to upload</el-button>
+      </template>
+      <template #uploadTip>
+        <div style="color: #ccc; font-size: 12px">
+          jpg/png files with a size less than 500KB.
+        </div>
+      </template>
+    </m-form>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -150,7 +170,43 @@ let options: FormOptions[] = [
       },
     ],
   },
+  {
+    type: "upload",
+    label: "上传",
+    prop: "pic",
+    uploadAttrs: {
+      actions: "https://jsonplaceholder.typicode.com/posts/",
+    },
+    rules: [
+      {
+        required: true,
+        message: "上传不能为空",
+        trigger: "blur",
+      },
+    ],
+  },
 ];
+let handleRemove = (val: any) => {
+  console.log("handleRemove", val);
+};
+let handlePreview = (val: any) => {
+  console.log("handlePreview", val);
+};
+let handleExceed = (val: any) => {
+  console.log("handleExceed", val);
+};
+let beforeRemove = (val: any) => {
+  console.log("beforeRemove", val);
+};
+let handleSuccess = (val: any) => {
+  console.log("handleSuccess", val);
+};
+let handleChange = (val: any) => {
+  console.log("handleChange", val);
+};
+let beforeUpload = (val: any) => {
+  console.log("beforeUpload", val);
+};
 </script>
 
 <style lang="scss" scoped></style>
