@@ -10,6 +10,7 @@ import chooseTime from './chooseTime'
 import chooseDate from './chooseDate'
 import citySelect from './citySelect'
 import form from './form'
+import modalForm from './modalForm'
 
 const components = [
   chooseArea,
@@ -22,7 +23,8 @@ const components = [
   chooseTime,
   chooseDate,
   citySelect,
-  form
+  form,
+  modalForm
 ]
 
 export default {

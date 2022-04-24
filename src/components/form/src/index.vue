@@ -144,15 +144,27 @@ let restFields = () => {
   // 重置富文本编辑器的内容
   // 获取到富文本的配置项
   if (props.options && props.options.length) {
-    let editorItem = props.options.find((item) => item.type === "editor")!;
-    edit.value.txt.html(editorItem.value);
+    let editorItem = props.options.find((item) => item.type === "editor");
+    if (editorItem) edit.value.txt.html(editorItem.value);
   }
+};
+
+// 表单验证
+let validate = () => {
+  return form.value!.validate;
+};
+
+// 获取表单数据
+let getFormData = () => {
+  return model.value;
 };
 
 // defineExpose 将子组件自身的属性暴露出去，使其父组件可以通过 ref 来获取对应的值
 // 分发方法
 defineExpose({
   restFields,
+  validate,
+  getFormData,
 });
 
 // 上传组件的所有方法
