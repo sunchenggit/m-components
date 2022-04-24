@@ -15,7 +15,8 @@
     "sass": "^1.49.11",
     "sass-loader": "^12.6.0",
     "vue": "^3.2.25",
-    "vue-router": "^4.0.13"
+    "vue-router": "^4.0.13",
+    "wangeditor": "^4.7.15"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.0",

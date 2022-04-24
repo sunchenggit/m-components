@@ -2,6 +2,7 @@
   <!-- validate-on-rule-change 不需要一进来就帮我验证 -->
   <el-form
     v-if="model"
+    ref="form"
     v-bind="$attrs"
     :model="model"
     :rules="rules"
@@ -15,14 +16,14 @@
         v-if="!item.children || !item.children!.length"
       >
         <component
-          v-if="item.type !== 'upload'"
+          v-if="item.type !== 'upload' && item.type !== 'editor'"
           v-bind="item.attrs"
           :placeholder="item.placeholder"
           :is="`el-${item.type}`"
           v-model="model[item.prop!]"
         />
         <el-upload
-          v-else
+          v-if="item.type === 'upload'"
           v-bind="item.uploadAttrs"
           :on-preview="onPreview"
           :on-remove="onRemove"
@@ -40,6 +41,8 @@
             <slot name="uploadTip"></slot>
           </template>
         </el-upload>
+
+        <div v-if="item.type === 'editor'" id="editor"></div>
       </el-form-item>
       <el-form-item
         v-if="item.children && item.children!.length"
@@ -62,13 +65,21 @@
         </component>
       </el-form-item>
     </template>
+    <el-form-item>
+      <!-- 作用域插槽 -->
+      <slot name="action" :form="form" :model="model"></slot>
+    </el-form-item>
   </el-form>
 </template>
 
 <script lang="ts" setup>
-import { PropType, ref, onMounted, watch } from "vue";
+import E from "wangeditor";
+import { PropType, ref, onMounted, watch, nextTick } from "vue";
 import cloneDeep from "lodash/cloneDeep";
-import { FormOptions } from "./types/types";
+import { FormOptions, FormInstance } from "./types/types";
+
+let form = ref<FormInstance | null>(null);
+let edit = ref();
 
 let emits = defineEmits([
   "on-preview",
@@ -79,7 +90,6 @@ let emits = defineEmits([
   "on-change",
   "before-upload",
   "before-remove",
-  "http-request",
   "on-exceed",
 ]);
 
@@ -87,6 +97,10 @@ let props = defineProps({
   options: {
     type: Array as PropType<FormOptions[]>,
     required: true,
+  },
+  // 用户自定义上传方法
+  httpRequest: {
+    type: Function,
   },
 });
 let model = ref<any>(null);
@@ -100,64 +114,99 @@ let initForm = () => {
     props.options.map((item: FormOptions) => {
       m[item.prop!] = item.value;
       r[item.prop!] = item.rules;
+      // 初始化富文本编辑器
+      if (item.type === "editor") {
+        // 获取更新后的dom节点
+        nextTick(() => {
+          if (document.getElementById("editor")) {
+            const editor = new E("#editor");
+            editor.config.placeholder = item.placeholder!;
+            editor.create();
+            // 初始化 editor 的内容
+            editor.txt.html(item.value);
+            editor.config.onchange = (newHtml: string) => {
+              model.value[item.prop!] = newHtml;
+            };
+            edit.value = editor;
+          }
+        });
+      }
     });
     model.value = cloneDeep(m);
     rules.value = cloneDeep(r);
   }
 };
 
+// 重置表单方法
+let restFields = () => {
+  // 重置element-plus的表单
+  form.value!.resetFields();
+  // 重置富文本编辑器的内容
+  // 获取到富文本的配置项
+  if (props.options && props.options.length) {
+    let editorItem = props.options.find((item) => item.type === "editor")!;
+    edit.value.txt.html(editorItem.value);
+  }
+};
+
+// defineExpose 将子组件自身的属性暴露出去，使其父组件可以通过 ref 来获取对应的值
+// 分发方法
+defineExpose({
+  restFields,
+});
+
 // 上传组件的所有方法
-let onPreview = (file: any) => {
+let onPreview = (file: File) => {
   emits("on-preview", file);
 };
-let onRemove = (file: any, fileList: any) => {
+let onRemove = (file: File, fileList: FileList) => {
   emits("on-remove", {
     file,
     fileList,
   });
 };
-let onSuccess = (response: any, file: any, fileList: any) => {
+let onSuccess = (response: any, file: File, fileList: FileList) => {
+  // 上传图片成功，给表单上传项赋值
+  let uploadItem = props.options.find((item) => item.type === "upload")!;
+  model.value[uploadItem.prop!] = { response, file, fileList };
   emits("on-success", {
     response,
     file,
     fileList,
   });
 };
-let onError = (error: any, file: any, fileList: any) => {
+let onError = (error: any, file: any, fileList: FileList) => {
   emits("on-error", {
     error,
     file,
     fileList,
   });
 };
-let onProgress = (event: any, file: any, fileList: any) => {
+let onProgress = (event: any, file: File, fileList: FileList) => {
   emits("on-progress", {
     event,
     file,
     fileList,
   });
 };
-let onChange = (file: any, fileList: any) => {
+let onChange = (file: File, fileList: FileList) => {
   emits("on-change", {
     file,
     fileList,
   });
 };
-let beforeUpload = (file: any) => {
+let beforeUpload = (file: File) => {
   emits("before-upload", file);
 };
-let beforeRemove = (file: any, fileList: any) => {
+let beforeRemove = (file: File, fileList: FileList) => {
   emits("before-remove", {
     file,
     fileList,
   });
 };
-let httpRequest = () => {
-  emits("http-request");
-};
-let onExceed = (file: any, fileList: any) => {
+let onExceed = (files: File, fileList: FileList) => {
   emits("on-exceed", {
-    file,
+    files,
     fileList,
   });
 };

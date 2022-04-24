@@ -1,6 +1,7 @@
 <template>
   <div>
     <m-form
+      ref="form"
       :options="options"
       @on-change="handleChange"
       @before-upload="beforeUpload"
@@ -9,6 +10,7 @@
       @on-exceed="handleExceed"
       @before-remove="beforeRemove"
       @on-success="handleSuccess"
+      @on-error="onError"
     >
       <template #uploadArea>
         <el-button type="primary">Click to upload</el-button>
@@ -18,13 +20,24 @@
           jpg/png files with a size less than 500KB.
         </div>
       </template>
+      <template #action="scope">
+        <el-button type="primary" @click="submitForm(scope)">提交</el-button>
+        <el-button @click="resetForm">重置</el-button>
+      </template>
     </m-form>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { values } from "lodash";
-import { FormOptions } from "../../components/form/src/types/types";
+import { ref } from "vue";
+import {
+  FormOptions,
+  FormInstance,
+} from "../../components/form/src/types/types";
+interface Scope {
+  form: FormInstance;
+  model: any;
+}
 
 let options: FormOptions[] = [
   {
@@ -176,16 +189,35 @@ let options: FormOptions[] = [
     prop: "pic",
     uploadAttrs: {
       actions: "https://jsonplaceholder.typicode.com/posts/",
+      multiple: true,
+      limit: 3,
     },
+    // rules: [
+    //   {
+    //     required: true,
+    //     message: "上传不能为空",
+    //     trigger: "blur",
+    //   },
+    // ],
+  },
+  {
+    type: "editor",
+    value: "",
+    prop: "desc",
+    label: "描述",
+    placeholder: "请输入描述",
     rules: [
       {
         required: true,
-        message: "上传不能为空",
+        message: "描述不能为空",
         trigger: "blur",
       },
     ],
   },
 ];
+
+let form = ref();
+
 let handleRemove = (val: any) => {
   console.log("handleRemove", val);
 };
@@ -206,6 +238,21 @@ let handleChange = (val: any) => {
 };
 let beforeUpload = (val: any) => {
   console.log("beforeUpload", val);
+};
+let onError = (val: any) => {
+  console.log("onError", val);
+};
+let submitForm = (scope: Scope) => {
+  scope.form.validate((valid: boolean) => {
+    if (valid) {
+      console.log(scope.model);
+    } else {
+      console.log(valid);
+    }
+  });
+};
+let resetForm = () => {
+  form.value.restFields();
 };
 </script>
 
