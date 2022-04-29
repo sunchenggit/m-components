@@ -10,5 +10,7 @@ export interface TableOptions {
   // 自定义列模板名称
   slot?: string,
   // 是否代表操作项
-  action?: boolean
+  action?: boolean,
+  // 是否是可编辑的单元格
+  editable?: boolean
 }
