@@ -3,6 +3,8 @@
     <m-table
       :options="options"
       :data="tableData"
+      isEditRow
+      v-model:edit-row-index="editRowIndex"
       element-loading-text="加载中..."
       element-loading-background="rgba(122, 122, 122, 0.8)"
       :element-loading-spinner="svg"
@@ -32,6 +34,12 @@
         <el-button size="small" type="danger">删除</el-button>
       </template>
       <template #editCell="{ scope }">
+        <div style="display: flex">
+          <el-button type="primary" size="small">确认</el-button>
+          <el-button size="small">取消</el-button>
+        </div>
+      </template>
+      <template #editRow="{ scope }">
         <div style="display: flex">
           <el-button type="primary" size="small">确认</el-button>
           <el-button size="small">取消</el-button>
@@ -73,6 +81,8 @@ let tableData = ref<TableData[]>([
     address: "No. 189, Grove St, Los Angeles",
   },
 ]);
+
+let editRowIndex = ref<string>("");
 
 const svg = `
         <path class="path" d="
@@ -137,7 +147,9 @@ let options: TableOptions[] = [
     action: true,
   },
 ];
+
 let edit = (scope: any) => {
+  editRowIndex.value = "edit";
   console.log(scope);
 };
 

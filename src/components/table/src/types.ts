@@ -2,7 +2,7 @@ export interface TableOptions {
   /// 表头
   label: string,
   // 字段名称
-  prop?: string,
+  prop: string,
   // 列的宽度
   width?: string | number,
   // 对其方式

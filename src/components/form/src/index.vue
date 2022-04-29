@@ -20,7 +20,7 @@
           v-bind="item.attrs"
           :placeholder="item.placeholder"
           :is="`el-${item.type}`"
-          v-model="model[item.prop!]"
+          v-model="model[item.prop]"
         />
         <el-upload
           v-if="item.type === 'upload'"
@@ -53,7 +53,7 @@
           v-bind="item.attrs"
           :placeholder="item.placeholder"
           :is="`el-${item.type}`"
-          v-model="model[item.prop!]"
+          v-model="model[item.prop]"
         >
           <component
             v-for="(child, i) in item.children"
@@ -112,8 +112,8 @@ let initForm = () => {
     let m: any = {};
     let r: any = {};
     props.options.map((item: FormOptions) => {
-      m[item.prop!] = item.value;
-      r[item.prop!] = item.rules;
+      m[item.prop] = item.value;
+      r[item.prop] = item.rules;
       // 初始化富文本编辑器
       if (item.type === "editor") {
         // 获取更新后的dom节点
@@ -125,7 +125,7 @@ let initForm = () => {
             // 初始化 editor 的内容
             editor.txt.html(item.value);
             editor.config.onchange = (newHtml: string) => {
-              model.value[item.prop!] = newHtml;
+              model.value[item.prop] = newHtml;
             };
             edit.value = editor;
           }
@@ -180,7 +180,7 @@ let onRemove = (file: File, fileList: FileList) => {
 let onSuccess = (response: any, file: File, fileList: FileList) => {
   // 上传图片成功，给表单上传项赋值
   let uploadItem = props.options.find((item) => item.type === "upload")!;
-  model.value[uploadItem.prop!] = { response, file, fileList };
+  model.value[uploaditem.prop] = { response, file, fileList };
   emits("on-success", {
     response,
     file,
