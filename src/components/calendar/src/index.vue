@@ -61,6 +61,15 @@ let props = defineProps({
     type: Array as PropType<EventItem[]>,
     default: () => [],
   },
+  // 日历显示结束时间
+  displayEventEnd: {
+    type: Boolean,
+    default: false,
+  },
+  // 自定义事件渲染内容
+  eventContent: {
+    type: Function,
+  },
 });
 let rednerCalendar = () => {
   let el = document.getElementById("calendar");
@@ -89,6 +98,9 @@ let rednerCalendar = () => {
       eventClick(info: EventClickArg) {
         emits("eventClick", info);
       },
+      displayEventEnd: props.displayEventEnd,
+      // 自定义渲染事件内容
+      eventContent: props.eventContent,
     });
     calendar.value.render();
   }
