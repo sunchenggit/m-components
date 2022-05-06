@@ -7,6 +7,7 @@ import router from './router'
 import { toLine } from './utils'
 import mUI from './components'
 const app = createApp(App)
+import './mock'
 
 // 全局注册图标 牺牲一点性能
 for (let i in Icons) {

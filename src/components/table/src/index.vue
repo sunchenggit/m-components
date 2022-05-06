@@ -1,5 +1,6 @@
 <template>
   <el-table
+    v-bind="$attrs"
     :data="tableData"
     v-loading="isLoading"
     :element-loading-text="elementLoadingText"
@@ -60,6 +61,21 @@
       </template>
     </el-table-column>
   </el-table>
+  <div
+    class="pagination"
+    v-if="pagination"
+    :style="{ 'justify-content': paginationAlignJustify }"
+  >
+    <el-pagination
+      v-model:currentPage="currentPage"
+      v-model:page-size="pageSize"
+      :page-sizes="pageSizes"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="400"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -69,7 +85,13 @@ import { TableOptions } from "./types";
 import cloneDeep from "lodash/cloneDeep";
 
 // 分发事件
-let emits = defineEmits(["close", "check", "update:editRowIndex"]);
+let emits = defineEmits([
+  "close",
+  "check",
+  "update:editRowIndex",
+  "size-change",
+  "current-change",
+]);
 let props = defineProps({
   // 表格的配置
   options: {
@@ -115,6 +137,35 @@ let props = defineProps({
   editRowIndex: {
     type: String,
     default: "",
+  },
+  // 当前是第几页的
+  currentPage: {
+    type: Number,
+    default: 1,
+  },
+  // 每页数据的选项
+  pageSizes: {
+    type: Array as PropType<number[]>,
+    default: [10, 20, 30, 40],
+  },
+  // 当前一页多少条数据
+  pageSize: {
+    type: Number,
+    default: 10,
+  },
+  // 分页总数
+  total: {
+    type: Number,
+  },
+  // 是否开启分页
+  pagination: {
+    type: Boolean,
+    default: false,
+  },
+  // 分页的排列方式
+  paginationAlign: {
+    type: String as PropType<"left" | "center" | "right">,
+    default: "left",
   },
 });
 // 过滤操作项之后的重置
@@ -198,6 +249,21 @@ let rowClick = (row: any, column: any) => {
     }
   }
 };
+
+// 分页的椰树改变
+let handleSizeChange = (val: number) => {
+  emits("size-change", val);
+};
+// 分页的条数改变
+let handleCurrentChange = (val: number) => {
+  emits("current-change", val);
+};
+// 和flex布局结合的排列方式
+let paginationAlignJustify = computed(() => {
+  if (props.paginationAlign === "left") return "flex-start";
+  else if (props.paginationAlign === "center") return "center";
+  else return "flex-end";
+});
 </script>
 
 <style lang="scss" scoped>
@@ -223,5 +289,10 @@ let rowClick = (row: any, column: any) => {
   .close {
     color: green;
   }
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
 }
 </style>

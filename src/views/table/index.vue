@@ -9,8 +9,15 @@
       element-loading-background="rgba(122, 122, 122, 0.8)"
       :element-loading-spinner="svg"
       edit-icon="Bottom"
+      pagination
+      paginationAlign="center"
+      :total="total"
+      :currentPage="current"
+      :pageSize="pageSize"
       @check="check"
       @close="close"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
     >
       <template #date="{ scope }">
         <el-icon-timer></el-icon-timer>
@@ -50,8 +57,9 @@
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import { TableOptions } from "../../components/table/src/types";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 interface TableData {
   date: string;
@@ -59,28 +67,8 @@ interface TableData {
   address: string;
 }
 
-let tableData = ref<TableData[]>([
-  {
-    date: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-]);
+// 表格数据
+let tableData = ref<TableData[]>([]);
 
 let editRowIndex = ref<string>("");
 
@@ -94,6 +82,27 @@ const svg = `
           L 15 15
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `;
+
+let current = ref<number>(1);
+let pageSize = ref<number>(10);
+let total = ref<number>(0);
+
+let getData = () => {
+  axios
+    .post("/api/list", {
+      current: current.value,
+      pageSize: pageSize.value,
+    })
+    .then((res) => {
+      console.log(res.data.data);
+      tableData.value = res.data.data.rows;
+      total.value = res.data.data.total;
+    });
+};
+
+onMounted(() => {
+  getData();
+});
 
 // 表格数据
 // setTimeout(() => {
@@ -160,6 +169,14 @@ let check = (scope: any) => {
 // 点击叉
 let close = (scope: any) => {
   console.log(scope);
+};
+let handleSizeChange = (val: number) => {
+  pageSize.value = val;
+  getData();
+};
+let handleCurrentChange = (val: number) => {
+  current.value = val;
+  getData();
 };
 </script>
 
